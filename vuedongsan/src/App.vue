@@ -9,10 +9,16 @@
         <button @click="increase(i)">증가</button>
       </li>
     </ul>
-    <vueModal :data="list" :press="press" v-if="show" @close="show = false" />
+    <vueModal
+      :data="list"
+      :press="press"
+      @close="show = false"
+      class="modalShow"
+      :class="{ active: show }"
+    />
   </div>
 </template>
-
+:class="{ active: show }" v-if="show"
 <script lang="ts">
 import { defineComponent } from "vue";
 import list from "./assets/data";
@@ -67,5 +73,12 @@ ul {
       text-align: center;
     }
   }
+}
+.modalShow {
+  opacity: 0;
+  transition: all 1s;
+}
+.active {
+  opacity: 1;
 }
 </style>

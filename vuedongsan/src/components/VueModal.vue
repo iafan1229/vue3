@@ -4,8 +4,13 @@
       <li><img :src="data[press].image" /></li>
       <li>{{ data[press].title }}</li>
       <li>{{ data[press].content }}</li>
-      <li>{{ data[press].price }}원</li>
-      <li><button @click="$emit('close')">닫기</button></li>
+      <li>{{ month * data[press].price }}원</li>
+      <li>{{ month }}개월</li>
+      <li>
+        개월: <input type="text" @input="(e) => handleChange(e)" />
+        <!-- v-model="month" ?? watch부분을 다 수정해야 함-->
+        <button @click="$emit('close')">닫기</button>
+      </li>
     </ul>
   </div>
 </template>
@@ -17,6 +22,31 @@ export default defineComponent({
   props: {
     data: Array,
     press: Number,
+  },
+  methods: {
+    handleChange(e: InputEvent) {
+      const eventTarget = e.target as HTMLInputElement;
+      this.month = Number(eventTarget.value);
+    },
+  },
+  data() {
+    return {
+      month: 1,
+    };
+  },
+  watch: {
+    month(data) {
+      const regex = /[\b]/;
+      const regex2 = /[0-9]/i;
+      if (!regex.test(data) && !regex2.test(data)) {
+        alert("숫자만 입력하세요");
+      }
+      if (regex.test(data) && data.length >= 3) {
+        alert("두자리 숫자 이상 입력하지 마세요");
+      } else if (Number(data) >= 13) {
+        alert("12개월 이상 입력하지 마세요.");
+      }
+    },
   },
 });
 </script>
@@ -37,8 +67,14 @@ export default defineComponent({
   gap: 5px;
   justify-content: center;
   align-items: center;
-  img {
+
+  img,
+  input,
+  li {
     width: 100%;
+  }
+  input {
+    width: 80%;
   }
 }
 </style>
