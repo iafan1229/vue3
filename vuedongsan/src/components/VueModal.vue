@@ -40,11 +40,14 @@ export default defineComponent({
       const regex2 = /[0-9]/i;
       if (!regex.test(data) && !regex2.test(data)) {
         alert("숫자만 입력하세요");
+        this.month = 1;
       }
       if (regex.test(data) && data.length >= 3) {
         alert("두자리 숫자 이상 입력하지 마세요");
+        this.month = 1;
       } else if (Number(data) >= 13) {
         alert("12개월 이상 입력하지 마세요.");
+        this.month = 1;
       }
     },
   },

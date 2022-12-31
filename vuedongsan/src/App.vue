@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div class="discount">
+      <h1>오늘 결제하면 {{ discount }}% 할인</h1>
+    </div>
+    <div class="sort">
+      <button @click="handlePrice">낮은 가격순으로 보기</button>
+      <button @click="list = [...sortBack]">원래 가격으로 되돌리기</button>
+      <button @click="handleSort">abc순 정렬</button>
+    </div>
     <ul class="list">
       <li v-for="(a, i) in list" :key="i">
         <img :src="list[i].image" />
@@ -9,16 +17,11 @@
         <button @click="increase(i)">증가</button>
       </li>
     </ul>
-    <vueModal
-      :data="list"
-      :press="press"
-      @close="show = false"
-      class="modalShow"
-      :class="{ active: show }"
-    />
+    <transition name="fade">
+      <vueModal :data="list" :press="press" @close="show = false" v-if="show" />
+    </transition>
   </div>
 </template>
-:class="{ active: show }" v-if="show"
 <script lang="ts">
 import { defineComponent } from "vue";
 import list from "./assets/data";
@@ -27,10 +30,13 @@ import vueModal from "./components/VueModal.vue";
 export default defineComponent({
   data() {
     return {
+      discount: 30,
+      list: [...list],
+      sortBack: [...list],
       press: 0,
       show: false,
       alarm: Array(6).fill(0),
-      list,
+      timerFunc: 0,
     };
   },
   methods: {
@@ -40,9 +46,27 @@ export default defineComponent({
     handleClick(i: number) {
       (this.press = i), (this.show = true);
     },
+    handlePrice() {
+      this.list.sort(
+        (a: { price: number }, b: { price: number }) => a.price - b.price
+      );
+    },
+    handleSort() {
+      this.list = [...this.sortBack].sort((a, b) =>
+        a.title < b.title ? -1 : 1
+      );
+    },
   },
   components: {
     vueModal,
+  },
+  mounted() {
+    this.timerFunc = setInterval(() => {
+      this.discount -= 1;
+    }, 1000);
+  },
+  updated() {
+    if (this.discount == 0) clearInterval(this.timerFunc);
   },
 });
 </script>
@@ -74,11 +98,27 @@ ul {
     }
   }
 }
-.modalShow {
-  opacity: 0;
-  transition: all 1s;
+.discount {
+  background: lightgray;
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+  h1 {
+    font-size: 20px;
+  }
 }
-.active {
-  opacity: 1;
+.sort {
+  padding: 10px 0;
+  button {
+    margin-right: 10px;
+  }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
