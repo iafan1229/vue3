@@ -4,20 +4,41 @@
 			<div class="post-header">
 				<div
 					class="profile"
-					:style="{ 'background-image': `url(${data.postImage}` }"
+					:style="{ 'background-image': `url(${data?.postImage}` }"
 				></div>
-				<span class="profile-name">{{ data.name }}</span>
+				<span class="profile-name">{{ data?.name }}</span>
 			</div>
 			<div
 				class="post-body"
-				:style="{ 'background-image': `url(${data.postImage}` }"
+				:style="{ 'background-image': `url(${data?.postImage}` }"
+				:class="data?.filter ? data?.filter : ''"
 			></div>
 			<div class="post-content">
-				<p class="likes">{{ data.likes }} Likes</p>
-				<p>
-					<strong>{{ data.name }}</strong> {{ data.content }}
+				<p
+					class="likes"
+					@click="$emit('changeLike')"
+					:style="{
+						cursor: 'pointer',
+						display: 'inline-block',
+					}"
+				>
+					{{ likes && likes }} Likes
 				</p>
-				<p class="date">{{ data.date }}</p>
+				<p
+					class="likes"
+					@click="$emit('minus', -1)"
+					:style="{
+						display: 'inline-block',
+						paddingLeft: '10px',
+						cursor: 'pointer',
+					}"
+				>
+					disLike
+				</p>
+				<p>
+					<strong>{{ data?.name }}</strong> {{ data?.content }}
+				</p>
+				<p class="date">{{ data?.date }}</p>
 			</div>
 		</div>
 	</div>
@@ -29,6 +50,7 @@
 	export default defineComponent({
 		props: {
 			data: Object,
+			likes: Number,
 		},
 	});
 </script>

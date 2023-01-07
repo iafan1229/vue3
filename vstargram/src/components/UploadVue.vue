@@ -3,18 +3,28 @@
 		<!-- 필터선택페이지 -->
 		<div
 			class="upload-image"
+			:class="filtered"
 			:style="{
 				backgroundImage: `url(${url ? url : imageUrl}) `,
 			}"
 		></div>
 		<div class="filters">
 			<div
-				:style="{ backgroundImage: `url(${url ? url : imageUrl})` }"
+				:style="{
+					backgroundImage: `url(${url ? url : imageUrl})`,
+					cursor: 'pointer',
+				}"
 				v-for="(a, i) in filters"
 				:key="i"
 				:class="`filter-1 filter-item ${a}`"
+				@click="handleClick(a)"
 			>
-				<slot></slot>
+				<span
+					:style="{
+						color: '#000',
+					}"
+					>{{ a }}</span
+				>
 			</div>
 		</div>
 
@@ -34,6 +44,7 @@
 			return {
 				image: true,
 				imageUrl: '' as string | null,
+				filtered: '',
 				filters: [
 					'aden',
 					'_1977',
@@ -75,6 +86,10 @@
 				const filed = file.files;
 				const url = filed && URL.createObjectURL(filed[0]);
 				this.imageUrl = filed && url;
+			},
+			handleClick(a: string) {
+				this.filtered = a;
+				this.$store.commit('filtering', a);
 			},
 		},
 	});

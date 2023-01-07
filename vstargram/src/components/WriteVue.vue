@@ -2,6 +2,7 @@
 	<div>
 		<div
 			class="upload-image"
+			:class="$store.state.filter"
 			:style="{
 				backgroundImage: `url(${url}) `,
 			}"
@@ -36,10 +37,11 @@
 					date: 'March 1',
 					liked: false,
 					content: this.handleWrite,
-					filter: 'perpetua',
+					filter: this.$store.state.filter,
 				};
 				this.newData = { ...newPosts };
 				this.$emit('results', this.newData);
+				this.$store.commit('increase');
 			},
 		},
 		watch: {
