@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 import ContainerVue from './components/ContainerVue.vue';
 import WriteVue from './components/WriteVue.vue';
 import UploadVue from './components/UploadVue.vue';
+import MyPage from './components/MyPage.vue';
 
 const routes = [
 	{
@@ -15,6 +16,10 @@ const routes = [
 	{
 		path: '/upload',
 		component: UploadVue,
+	},
+	{
+		path: '/mypage',
+		component: MyPage,
 	},
 	// {
 	// 	path: '/posts/:id',

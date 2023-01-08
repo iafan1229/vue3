@@ -13,6 +13,9 @@
 			</ul>
 			<ul class="header-button-right">
 				<li>
+					<router-link to="/mypage">search</router-link>
+				</li>
+				<li>
 					<router-link :to="show ? '/' : '/upload'">{{
 						show ? 'post' : 'write'
 					}}</router-link>
@@ -108,10 +111,15 @@
 	}
 	.header-button-right {
 		color: rgb(68, 164, 201);
-		float: right;
-		width: 50px;
+		position: absolute;
+		right: 0;
+		width: 120px;
 		cursor: pointer;
 		margin-top: 10px;
+	}
+	.header-button-right li {
+		display: inline-block;
+		padding-left: 10px;
 	}
 	.footer {
 		width: 100%;
