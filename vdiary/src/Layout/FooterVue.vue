@@ -6,9 +6,10 @@
 
 <style lang="scss" scoped>
 	div {
-		position: fixed;
+		// position: sticky;
 		bottom: 0;
 		text-align: center;
 		width: 100%;
+		background:#fafafa;
 	}
 </style>
