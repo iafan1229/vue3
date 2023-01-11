@@ -3,7 +3,7 @@
 		<div class="calendar" @click="(e) => e.stopPropagation()">
 			<v-date-picker
 				mode="date"
-				@click="(e) => handleDatePicker(e)"
+				@click="(e:Event) => handleDatePicker(e)"
 				v-model="date"
 				isExpanded
 			/>
@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-	import { defineEmits, ref, defineProps } from 'vue';
+	import { defineEmits, ref } from 'vue';
 
 	const date = ref(new Date());
 	const emit = defineEmits(['dateChange', 'changeBoolean']);
 
-	const handleDatePicker = (e) => {
+	const handleDatePicker = (e: Event) => {
 		e.stopPropagation();
 		// date.value = e.target.value;
 		emit('dateChange', date.value);
