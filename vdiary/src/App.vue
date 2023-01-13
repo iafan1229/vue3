@@ -1,20 +1,17 @@
 <template>
 	<HeaderVue />
-	<router-view></router-view>
+	{{ dateArray }}
+	<router-view @date="(e:string)=>dateArray.push(e)"></router-view>
 	<FooterVue />
 </template>
 
 <script setup lang="ts">
-	import { onMounted, ref, watch } from '@vue/runtime-core';
+	import { onMounted, ref, watch, onUpdated } from '@vue/runtime-core';
+	import { useRoute } from 'vue-router';
 	import FooterVue from './Layout/FooterVue.vue';
 	import HeaderVue from './Layout/HeaderVue.vue';
-	import PostWrite from './components/PostWrite.vue';
 
-	const a = ref(3);
-	onMounted(() => {
-		console.log('hi');
-		a.value = 4;
-	});
+	const dateArray = ref<string[]>([]);
 </script>
 
 <style lang="scss">

@@ -1,5 +1,5 @@
 <template>
-	<form class="write-form">
+	<form class="write-form" @submit="(e:Event) => handleSubmit(e)">
 		<transition name="fade">
 			<PostCalendar
 				@date-change="(date:Date) => (dateValue = date)"
@@ -26,19 +26,30 @@
 				type="number"
 				class="form-control"
 				ref="myInput"
-				placeholder="1"
+				placeholder="0"
+				v-model="values.water"
 			/>잔
 		</div>
 		<div class="mb-3 num-input">
 			<label class="form-label">하루 흡연량</label>
-			<input type="number" class="form-control" placeholder="1" />개비
+			<input
+				type="number"
+				class="form-control"
+				placeholder="0"
+				v-model="values.smoke"
+			/>개비
 		</div>
 		<div class="mb-3 num-input">
 			<label class="form-label">하루 주량</label>
 			<select name="" id="" class="form-select">
 				<option value="">소주</option>
 			</select>
-			<input type="number" class="form-control" placeholder="1" />병
+			<input
+				type="number"
+				class="form-control"
+				placeholder="0"
+				v-model="values.drink"
+			/>병
 		</div>
 		<div class="form-check">
 			<input
@@ -71,7 +82,7 @@
 			<ul class="nav nav-tabs">
 				<li
 					class="nav-item"
-					v-for="(a, i) in ['오전', '오후']"
+					v-for="(a, i) in day"
 					:key="i"
 					:class="tabNum === i ? 'active' : null"
 					@click="tabNum = i"
@@ -83,19 +94,27 @@
 				<div v-if="tabNum === i">
 					<h4>운동을 선택하세요*</h4>
 					<select name="" id="" class="form-select" v-model="category">
-						<option value="0">걷기</option>
-						<option value="1">헬스</option>
-						<option value="2">요가</option>
-						<option value="3">필라테스</option>
+						<option value="walk" selected>걷기</option>
+						<option value="gym">헬스</option>
+						<option value="yoga">요가</option>
+						<option value="pilates">필라테스</option>
 					</select>
 					<div class="category-wrap">
 						<div class="walk" v-if="walk">
 							<h4>스마트폰에 입력된 걷기양을 입력하세요*</h4>
-							<input type="text" class="form-control" /><span>걸음</span>
+							<input
+								type="text"
+								class="form-control"
+								v-model="count.walk"
+							/><span>걸음</span>
 						</div>
 						<div class="others" v-if="!walk">
 							<h4>운동 횟수를 입력하세요</h4>
-							<input type="text" class="form-control" /><span>회</span>
+							<input
+								type="text"
+								class="form-control"
+								v-model="count.amount"
+							/><span>회</span>
 						</div>
 					</div>
 				</div>
@@ -112,13 +131,22 @@
 			></textarea>
 			<label for="floatingTextarea2">간단하게 할말 남기기</label>
 		</div>
-		<button type="submit" class="btn btn-dark">submit</button>
+		<input type="submit" class="btn btn-dark" value="submit" />
 	</form>
 </template>
 
 <script setup lang="ts">
-	import { onMounted, watch, reactive, ref, computed } from 'vue';
+	import {
+		onMounted,
+		watch,
+		reactive,
+		ref,
+		computed,
+		onUpdated,
+		defineEmits,
+	} from 'vue';
 	import PostCalendar from './PostCalendar.vue';
+	const emit = defineEmits(['date']);
 
 	const dateValue = ref(new Date());
 	const calendar = ref(false);
@@ -129,9 +157,39 @@
 		return [1, 2];
 	});
 	const checked = ref<string>('');
-	const category = ref<string>('0');
+	const category = ref<string>('walk');
 	const walk = ref<boolean>(true);
 
+	interface IValues {
+		category: string;
+		morning: IDaily;
+		afternoon: IDaily;
+	}
+	interface IDaily {
+		num: INum;
+	}
+	interface INum {
+		walk: number;
+		etc: number;
+	}
+	const day = reactive<Array<string>>(['오전', '오후']);
+	const values = reactive({ water: 0, smoke: 0, drink: 0 });
+	const count = reactive({ walk: 0, amount: 0 });
+	const exerciseValues = reactive<IValues>({
+		category: 'walk',
+		morning: { num: { walk: 0, etc: 0 } },
+		afternoon: { num: { walk: 0, etc: 0 } },
+	});
+
+	const handleSubmit = (e: Event) => {
+		e.preventDefault();
+		localStorage;
+		localStorage.setItem(
+			dateValue.value.toLocaleDateString().toString(),
+			JSON.stringify({ values: values, exercise: exerciseValues })
+		);
+		emit('date', dateValue.value.toLocaleDateString().toString());
+	};
 	onMounted(() => {
 		if (myInput.value) myInput.value.focus();
 	});
@@ -143,10 +201,27 @@
 		}
 	});
 	watch(category, (a) => {
-		if (a === '0') {
+		exerciseValues.category = a;
+
+		if (a === 'walk') {
 			walk.value = true;
 		} else {
 			walk.value = false;
+		}
+	});
+	onUpdated(() => {
+		if (category.value === 'walk') {
+			if (tabNum.value === 0) {
+				exerciseValues.morning.num.walk = count.walk;
+			} else {
+				exerciseValues.afternoon.num.walk = count.walk;
+			}
+		} else {
+			if (tabNum.value === 0) {
+				exerciseValues.morning.num.etc = count.amount;
+			} else {
+				exerciseValues.afternoon.num.etc = count.amount;
+			}
 		}
 	});
 </script>
