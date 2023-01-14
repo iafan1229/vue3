@@ -1,46 +1,58 @@
 <template>
-	<ul>
-		<li v-for="(a, i) in data" :key="i">
-			<router-link :to="`${i}/detail`" class="card" style="width: 18rem">
-				<div class="card-body">
-					<h5 class="card-title">{{ a.date }}</h5>
-					<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-					<p class="card-text">
-						{{ a.comment }}
-					</p>
-				</div>
+	<ul class="card-box">
+		<li v-for="(a, i) in dataContent" :key="i">
+			<router-link :to="`${i}/detail`">
+				<h5>{{ a['date' as unknown as number] }}</h5>
+				<h6>데이터 검사 결과</h6>
+				<p>
+					{{ a['values' as unknown as number] }}
+					<!-- {{ a['exercise'] }} -->
+				</p>
 			</router-link>
 		</li>
 	</ul>
 </template>
 
 <script setup lang="ts">
-	import { reactive, ref, watch, onUpdated, defineProps, onMounted } from 'vue';
+	import { reactive, onMounted } from 'vue';
 	import data from '../assets/data';
-	const props = defineProps({
-		date: { type: String, required: true },
-	});
 
-	const dataContent = reactive([]);
-	const allkeys: Array<string> = reactive(['']);
+	let dataContent = reactive<Array<string>>([]);
+	let state = reactive(['좋음', '보통', '나쁨']);
 
-	watch(allkeys, () => {
-		const keys = Object.keys(localStorage);
-		const localData = keys.map((key) => localStorage.getItem(key));
-		allkeys.push();
-	});
-	onMounted(() => {
-		console.log(props.data);
-	});
-	onUpdated(() => {
-		const allKeys: Array<string> = Object.keys(localStorage);
-		const localData: Array<any> = allKeys.map((key) =>
-			localStorage.getItem(key)
-		);
-
-		// console.log(JSON.parse(localData || ""));
-		// dataContent.push()
-	});
+	const allKeys: Array<string> = Object.keys(localStorage);
+	const localData = allKeys.map((key) =>
+		JSON.parse(localStorage.getItem(key) || '{}')
+	);
+	dataContent = [...localData];
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+	.card-box {
+		display: flex;
+		gap: 30px;
+		flex-wrap: wrap;
+		padding: 15px 0;
+		li {
+			width: calc(100% / 3 - 30px);
+			height: 300px;
+			border: 1px solid #ddd;
+			text-align: center;
+			a {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				height: 100%;
+				h5,
+				h6 {
+					display: block;
+				}
+				h6 {
+					color: gray;
+				}
+			}
+		}
+	}
+</style>

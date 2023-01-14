@@ -1,7 +1,6 @@
 <template>
 	<HeaderVue />
-	{{ dateArray }}
-	<router-view @date="(e:string)=>dateArray.push(e)"></router-view>
+	<router-view></router-view>
 	<FooterVue />
 </template>
 
@@ -29,5 +28,9 @@
 	}
 	ul {
 		list-style: none;
+	}
+	a {
+		text-decoration: none !important;
+		color: #000 !important;
 	}
 </style>

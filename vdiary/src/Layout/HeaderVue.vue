@@ -2,7 +2,9 @@
 	<div>
 		<nav class="navbar navbar-expand-lg bg-body-secondary">
 			<div class="container-fluid">
-				<h1 class="navbar-brand" href="#">건강관리 앱</h1>
+				<h1 class="navbar-brand" href="#">
+					<router-link to="/">건강관리 앱</router-link>
+				</h1>
 				<button
 					class="navbar-toggler"
 					type="button"
@@ -51,5 +53,9 @@
 <style lang="scss">
 	.navbar {
 		background: #e3f2fd;
+	}
+	.navbar-nav li a.active {
+		color: rgb(123, 121, 121) !important;
+		font-weight: bold;
 	}
 </style>

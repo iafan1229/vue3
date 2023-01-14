@@ -136,18 +136,9 @@
 </template>
 
 <script setup lang="ts">
-	import {
-		onMounted,
-		watch,
-		reactive,
-		ref,
-		computed,
-		onUpdated,
-		defineEmits,
-	} from 'vue';
+	import router from '@/router';
+	import { onMounted, watch, reactive, ref, computed, onUpdated } from 'vue';
 	import PostCalendar from './PostCalendar.vue';
-	const emit = defineEmits(['date']);
-
 	const dateValue = ref(new Date());
 	const calendar = ref(false);
 	const myInput = ref<HTMLElement | null>(null);
@@ -159,6 +150,7 @@
 	const checked = ref<string>('');
 	const category = ref<string>('walk');
 	const walk = ref<boolean>(true);
+	const num = ref<number>(0);
 
 	interface IValues {
 		category: string;
@@ -183,12 +175,16 @@
 
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
-		localStorage;
+		num.value = localStorage.length;
 		localStorage.setItem(
-			dateValue.value.toLocaleDateString().toString(),
-			JSON.stringify({ values: values, exercise: exerciseValues })
+			String(num.value),
+			JSON.stringify({
+				date: dateValue.value.toLocaleDateString().toString(),
+				values: values,
+				exercise: exerciseValues,
+			})
 		);
-		emit('date', dateValue.value.toLocaleDateString().toString());
+		router.push('/');
 	};
 	onMounted(() => {
 		if (myInput.value) myInput.value.focus();
