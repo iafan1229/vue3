@@ -9,8 +9,23 @@
 	import { useRoute } from 'vue-router';
 	import FooterVue from './Layout/FooterVue.vue';
 	import HeaderVue from './Layout/HeaderVue.vue';
+	import { firestore } from './firebase';
 
-	const dateArray = ref<string[]>([]);
+	onMounted(() => {
+		const todos = firestore.collection('todos');
+		// todos.doc('test').set({ name: 'duck', height: 180 });
+		//todos.doc('test').update({ text: '꿀잠 자기', completed: true });
+
+		// todos
+		// 	.doc('test')
+		// 	.get()
+		// 	.then((doc) => {
+		// 		// document의 데이터를 가져옴
+		// 		console.log(doc.data());
+		// 		// document의 id를 가져옴
+		// 		console.log(doc.id);
+		// 	});
+	});
 </script>
 
 <style lang="scss">

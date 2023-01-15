@@ -139,6 +139,7 @@
 	import router from '@/router';
 	import { onMounted, watch, reactive, ref, computed, onUpdated } from 'vue';
 	import PostCalendar from './PostCalendar.vue';
+	import { firestore } from '../firebase';
 	const dateValue = ref(new Date());
 	const calendar = ref(false);
 	const myInput = ref<HTMLElement | null>(null);
@@ -150,7 +151,6 @@
 	const checked = ref<string>('');
 	const category = ref<string>('walk');
 	const walk = ref<boolean>(true);
-	const num = ref<number>(0);
 
 	interface IValues {
 		category: string;
@@ -174,16 +174,14 @@
 	});
 
 	const handleSubmit = (e: Event) => {
+		const todos = firestore.collection('todos');
 		e.preventDefault();
-		num.value = localStorage.length;
-		localStorage.setItem(
-			String(num.value),
-			JSON.stringify({
-				date: dateValue.value.toLocaleDateString().toString(),
-				values: values,
-				exercise: exerciseValues,
-			})
-		);
+		todos.add({
+			date: dateValue.value.toLocaleDateString().toString(),
+			values: values,
+			exercise: exerciseValues,
+		});
+
 		router.push('/');
 	};
 	onMounted(() => {

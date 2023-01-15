@@ -1,11 +1,15 @@
 <template>
 	<ul class="card-box">
-		<li v-for="(a, i) in dataContent" :key="i">
+		<li
+			v-for="(a, i) in dataContent"
+			:key="i"
+			@click="$router.push({ params: { date: a.date } })"
+		>
 			<router-link :to="`${i}/detail`">
-				<h5>{{ a['date' as unknown as number] }}</h5>
+				<h5>{{ a['date'] }}</h5>
 				<h6>데이터 검사 결과</h6>
 				<p>
-					{{ a['values' as unknown as number] }}
+					{{ a['values'] }}
 					<!-- {{ a['exercise'] }} -->
 				</p>
 			</router-link>
@@ -14,17 +18,41 @@
 </template>
 
 <script setup lang="ts">
-	import { reactive, onMounted } from 'vue';
+	import { reactive, onMounted, onUpdated } from 'vue';
 	import data from '../assets/data';
-
-	let dataContent = reactive<Array<string>>([]);
+	import { firestore } from '../firebase';
 	let state = reactive(['좋음', '보통', '나쁨']);
 
-	const allKeys: Array<string> = Object.keys(localStorage);
-	const localData = allKeys.map((key) =>
-		JSON.parse(localStorage.getItem(key) || '{}')
-	);
-	dataContent = [...localData];
+	interface IValues {
+		date?: string;
+		exercise?: IExer;
+		values?: IExer;
+	}
+	interface IExer {
+		category: string;
+		morning: IDaily;
+		afternoon: IDaily;
+	}
+	interface IDaily {
+		num: INum;
+	}
+	interface INum {
+		walk: number;
+		etc: number;
+	}
+
+	let dataContent = reactive<Array<IValues>>([]);
+
+	const todos = firestore.collection('todos');
+	todos.get().then((prod) => {
+		prod.forEach((el) => {
+			dataContent.push(el.data());
+		});
+	});
+	onUpdated(() => {
+		console.log(typeof dataContent);
+	});
+	// dataContent = [...localData];
 </script>
 
 <style lang="scss">
