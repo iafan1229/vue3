@@ -1,12 +1,12 @@
 <template>
-	<div>Copyright by Ha Youg Lee</div>
+	<div>2023 Copyright by Ha Youg Lee</div>
 </template>
 
 <script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 	div {
-		position: relative;
+		/* position: relative; */
 		bottom: 10px;
 		left: 0;
 		text-align: center;
