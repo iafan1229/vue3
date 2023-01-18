@@ -1,15 +1,18 @@
 <template>
-	<div>Copyright</div>
+	<div>Copyright by Ha Youg Lee</div>
 </template>
 
 <script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 	div {
-		// position: sticky;
-		bottom: 0;
+		position: relative;
+		bottom: 10px;
+		left: 0;
 		text-align: center;
 		width: 100%;
-		background:#fafafa;
+		background: #fafafa;
+		overflow: hidden;
+		border-radius: 10px;
 	}
 </style>

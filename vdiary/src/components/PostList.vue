@@ -1,16 +1,29 @@
 <template>
 	<ul class="card-box">
-		<li
-			v-for="(a, i) in dataContent"
-			:key="i"
-			@click="$router.push({ params: { date: a.date } })"
-		>
-			<router-link :to="`${i}/detail`">
+		<li v-for="(a, i) in dataContent" :key="i">
+			<router-link
+				:to="`${i}/detail`"
+				:class="status?.innerText === '좋음' && `good`"
+			>
 				<h5>{{ a['date'] }}</h5>
 				<h6>데이터 검사 결과</h6>
-				<p>
-					{{ a['values'] }}
-					<!-- {{ a['exercise'] }} -->
+				<p ref="status">
+					{{
+						a.values &&
+						(
+							Object.values(a.values).filter(
+								(el, idx) => idx === 0 && el <= 3
+							) &&
+							Object.values(a.values).filter((el, idx) => idx !== 0 && el > 0)
+						).length > 0
+							? '좋음'
+							: a.values &&
+							  Object.values(a.values).filter(
+									(el, idx) => idx === 0 && el >= 10
+							  ).length > 0
+							? '나쁨'
+							: '보통'
+					}}
 				</p>
 			</router-link>
 		</li>
@@ -18,15 +31,20 @@
 </template>
 
 <script setup lang="ts">
-	import { reactive, onMounted, onUpdated } from 'vue';
+	import { reactive, onMounted, onUpdated, ref } from 'vue';
 	import data from '../assets/data';
 	import { firestore } from '../firebase';
-	let state = reactive(['좋음', '보통', '나쁨']);
+	const status = ref<HTMLElement | null>(null);
 
 	interface IValues {
 		date?: string;
 		exercise?: IExer;
-		values?: IExer;
+		values?: IVal;
+	}
+	interface IVal {
+		smoke?: number;
+		water?: number;
+		drink?: number;
 	}
 	interface IExer {
 		category: string;
@@ -49,8 +67,9 @@
 			dataContent.push(el.data());
 		});
 	});
-	onUpdated(() => {
-		console.log(typeof dataContent);
+	onMounted(() => {
+		// console.log(typeof dataContent);
+		if (status.value) console.dir(status.value);
 	});
 	// dataContent = [...localData];
 </script>
