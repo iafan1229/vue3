@@ -18,7 +18,8 @@
 					: 'normal'
 			"
 		>
-			<div class="item front">
+			<router-link :to="`${i}/detail`">
+				<div class="item front">
 				<div class="card">
 					<div class="tools">
 						<div class="circle">
@@ -32,7 +33,7 @@
 						</div>
 					</div>
 					<div class="card__content">
-						<router-link :to="`${i}/detail`">
+						<div class="card__color">
 							<div class="card-wrap">
 								<h6>데이터 검사 결과</h6>
 								<p ref="status">
@@ -72,7 +73,7 @@
 									</h5>
 								</div>
 							</div>
-						</router-link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -83,6 +84,7 @@
 					마신 물은 {{ a.values?.water }} 잔 입니다.
 				</p>
 			</div>
+		</router-link>
 		</li>
 	</ul>
 </template>
@@ -162,18 +164,18 @@
 					color: gray;
 				}
 				h5 {
-					font-size: 24px;
+					font-size: 18px;
 					max-width: 80%;
 					margin: 0 auto;
 					padding: 10px 4px;
 					&.date1,
 					&.date2 {
-						font-size: 25px;
+						font-size: 18px;
 					}
 				}
 			}
 			&.good {
-				a {
+				.card__color {
 					background: linear-gradient(to right, #ffc6ec, rgb(255, 255, 183));
 					box-shadow: inset 2px 2px 2px rgb(0 0 0 / 7%);
 					border-radius: 8px;
@@ -187,7 +189,7 @@
 				}
 			}
 			&.normal {
-				a {
+				.card__color {
 					background: linear-gradient(to right, #fbf5c7, rgb(192, 235, 236));
 					box-shadow: inset 16px 16px 26px rgb(0 0 0 /5%);
 					border-radius: 8px;
@@ -241,14 +243,13 @@
 		background-color: #00ca4e;
 	}
 	.date-title {
-		padding: 5px;
 		background: rgba(0, 0, 0, 0.6);
 		color: #fff;
-		border-radius: 50%;
+		border-radius: 0%;
 		&.date0 {
 			display: inline-block;
 			vertical-align: middle;
-			padding: 8px;
+			line-height:0.2;
 		}
 		&.date1,
 		&.date2 {
@@ -256,11 +257,11 @@
 		}
 
 		&.date1 {
-			padding: 7px 9px;
 			vertical-align: middle;
+			line-height: 0.2;
 		}
 		&.date2 {
-			padding: 8px;
+			
 		}
 	}
 	.card-wrap {
@@ -282,11 +283,11 @@
 		&::before {
 			content: '';
 			position: absolute;
-			bottom: 7px;
+			bottom: -2px;
 			left: 50%;
 			display: inline-block;
-			width: 80%;
-			height: 3px;
+			width: 90%;
+			height: 2px;
 			background: #000;
 			transform: translateX(-50%);
 		}
