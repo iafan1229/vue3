@@ -174,9 +174,9 @@
 			}
 			&.good {
 				a {
-					background: linear-gradient(to right, #ffea28, yellow);
-					box-shadow: inset 16px 16px 26px rgb(0 0 0 / 25%);
-					border-radius: 100%;
+					background: linear-gradient(to right, #ffc6ec, rgb(255, 255, 183));
+					box-shadow: inset 2px 2px 2px rgb(0 0 0 / 7%);
+					border-radius: 8px;
 					width: calc(100% - 1rem * 4);
 					height: calc(100% - 1rem * 4);
 					position: absolute;
@@ -190,7 +190,7 @@
 				a {
 					background: linear-gradient(to right, #fbf5c7, rgb(192, 235, 236));
 					box-shadow: inset 16px 16px 26px rgb(0 0 0 /5%);
-					border-radius: 38%;
+					border-radius: 8px;
 					width: calc(100% - 1rem * 4);
 					height: calc(100% - 1rem * 4);
 					position: absolute;
@@ -221,7 +221,7 @@
 	}
 
 	.box {
-		display: inline-block;
+		display: block;
 		align-items: center;
 		width: 10px;
 		height: 10px;
@@ -242,7 +242,7 @@
 	}
 	.date-title {
 		padding: 5px;
-		background: rgba(0, 0, 0, 0.8);
+		background: rgba(0, 0, 0, 0.6);
 		color: #fff;
 		border-radius: 50%;
 		&.date0 {
