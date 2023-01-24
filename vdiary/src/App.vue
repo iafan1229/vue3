@@ -91,7 +91,7 @@
 		background: linear-gradient(#f00, #f0f);
 		clip-path: circle(20% at right 70%);
 		z-index: -1;
-		animation: move-up6 2s ease-in infinite alternate-reverse;
+		//animation: move-up6 2s ease-in infinite alternate-reverse;
 		/* animation-name: move-down1; */
 	}
 	body::after {
@@ -104,7 +104,7 @@
 		background: linear-gradient(#2196f3, #e91e63);
 		clip-path: circle(20% at 5% 5%);
 		z-index: -1;
-		animation: move-down1 2s ease-in infinite alternate-reverse;
+		//animation: move-down1 2s ease-in infinite alternate-reverse;
 	}
 	.container {
 	}
