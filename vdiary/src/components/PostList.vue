@@ -6,85 +6,76 @@
 			class="container"
 			:class="
 				a.values &&
-				(
-					Object.values(a.values).filter((el, idx) => idx === 0 && el <= 3) &&
-					Object.values(a.values).filter((el, idx) => idx !== 0 && el > 0)
-				).length > 0
+				a.values?.smoke === 0 &&
+				a.values?.water &&
+				a.values.water >= 3
 					? 'good'
-					: a.values &&
-					  Object.values(a.values).filter((el, idx) => idx === 0 && el >= 10)
-							.length > 0
+					: (a.values?.smoke && a.values?.smoke >= 3) ||
+					  (a.values?.drink && a.values?.drink >= 3)
 					? 'bad'
 					: 'normal'
 			"
 		>
 			<router-link :to="`${i}/detail`">
 				<div class="item front">
-				<div class="card">
-					<div class="tools">
-						<div class="circle">
-							<span class="red box"></span>
+					<div class="card">
+						<div class="tools">
+							<div class="circle">
+								<span class="red box"></span>
+							</div>
+							<div class="circle">
+								<span class="yellow box"></span>
+							</div>
+							<div class="circle">
+								<span class="green box"></span>
+							</div>
 						</div>
-						<div class="circle">
-							<span class="yellow box"></span>
-						</div>
-						<div class="circle">
-							<span class="green box"></span>
-						</div>
-					</div>
-					<div class="card__content">
-						<div class="card__color">
-							<div class="card-wrap">
-								<h6>데이터 검사 결과</h6>
-								<p ref="status">
-									{{
-										a.values &&
-										(
-											Object.values(a.values).filter(
-												(el, idx) => idx === 0 && el <= 3
-											) &&
-											Object.values(a.values).filter(
-												(el, idx) => idx !== 0 && el > 0
-											)
-										).length > 0
-											? '좋음'
-											: a.values &&
-											  Object.values(a.values).filter(
-													(el, idx) => idx === 0 && el >= 10
-											  ).length > 0
-											? '나쁨'
-											: '보통'
-									}}
-								</p>
-								<h5
-									:class="`date-title date${i}`"
-									v-for="(x, i) in a['date']?.split('.').slice(0, 1)"
-									:key="i"
-								>
-									{{ x === '2023' ? x + '年' : x }}
-								</h5>
-								<div class="date-inner">
+						<div class="card__content">
+							<div class="card__color">
+								<div class="card-wrap">
+									<h6>데이터 검사 결과</h6>
+									<p ref="status">
+										{{
+											a.values &&
+											a.values?.smoke === 0 &&
+											a.values?.water &&
+											a.values?.water >= 3
+												? '좋음'
+												: (a.values?.drink && a.values?.drink >= 3) ||
+												  (a.values?.smoke && a.values?.smoke >= 3)
+												? '나쁨'
+												: '보통'
+										}}
+									</p>
 									<h5
 										:class="`date-title date${i}`"
-										v-for="(x, i) in a['date']?.split('.').slice(1, 3)"
+										v-for="(x, i) in a['date']?.split('.').slice(0, 1)"
 										:key="i"
 									>
-										{{ x.length === 2 ? '0' + x.trim() : x }}
+										{{ x === '2023' ? x + '年' : x }}
 									</h5>
+									<div class="date-inner">
+										<h5
+											:class="`date-title date${i}`"
+											v-for="(x, i) in a['date']?.split('.').slice(1, 3)"
+											:key="i"
+										>
+											{{ x.length === 2 ? '0' + x.trim() : x }}
+										</h5>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="item back">
-				<p :style="{ fontSize: '16px' }">
-					마신 주량은 {{ a.values?.drink }}이고 <br />
-					흡연량은 {{ a.values?.smoke }}. <br />
-					마신 물은 {{ a.values?.water }} 잔 입니다.
-				</p>
-			</div>
-		</router-link>
+				<div class="item back">
+					<p :style="{ fontSize: '16px' }">
+						마신 주량은 {{ a.values?.drink }}이고 <br />
+						흡연량은 {{ a.values?.smoke }}. <br />
+						마신 물은 {{ a.values?.water }} 잔 입니다.
+					</p>
+				</div>
+			</router-link>
 		</li>
 	</ul>
 </template>
@@ -93,7 +84,6 @@
 	import { reactive, onMounted, onUpdated, ref } from 'vue';
 	import data from '../assets/data';
 	import { firestore } from '../firebase';
-	const status = ref<HTMLElement | null>(null);
 
 	interface IValues {
 		date?: string;
@@ -119,6 +109,7 @@
 	}
 
 	let dataContent = reactive<Array<IValues>>([]);
+	const status = ref('보통');
 
 	const todos = firestore.collection('todos');
 	todos.get().then((prod) => {
@@ -178,6 +169,18 @@
 				.card__color {
 					background: linear-gradient(to right, #ffc6ec, rgb(255, 255, 183));
 					box-shadow: inset 2px 2px 2px rgb(0 0 0 / 7%);
+					border-radius: 8px;
+					width: calc(100% - 1rem * 4);
+					height: calc(100% - 1rem * 4);
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					overflow: hidden;
+				}
+			}
+			&.bad {
+				.card__color {
 					border-radius: 8px;
 					width: calc(100% - 1rem * 4);
 					height: calc(100% - 1rem * 4);
@@ -249,7 +252,7 @@
 		&.date0 {
 			display: inline-block;
 			vertical-align: middle;
-			line-height:0.2;
+			line-height: 0.2;
 		}
 		&.date1,
 		&.date2 {
@@ -261,7 +264,6 @@
 			line-height: 0.2;
 		}
 		&.date2 {
-			
 		}
 	}
 	.card-wrap {

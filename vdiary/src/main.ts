@@ -4,6 +4,7 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VCalendar from 'v-calendar';
 import 'v-calendar/dist/style.css';
-
+import VueApexCharts from 'vue3-apexcharts';
 import router from './router';
-createApp(App).use(router).use(VCalendar).mount('#app');
+
+createApp(App).use(router).use(VCalendar).use(VueApexCharts).mount('#app');

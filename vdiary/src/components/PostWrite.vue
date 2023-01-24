@@ -93,28 +93,24 @@
 			<div class="nav-content" v-for="(a, i) in array" :key="i" :data-index="i">
 				<div v-if="tabNum === i">
 					<h4>운동을 선택하세요*</h4>
-					<select name="" id="" class="form-select" v-model="category">
+					<select name="" id="" class="form-select" v-model="a.category">
 						<option value="walk" selected>걷기</option>
 						<option value="gym">헬스</option>
 						<option value="yoga">요가</option>
 						<option value="pilates">필라테스</option>
 					</select>
 					<div class="category-wrap">
-						<div class="walk" v-if="walk">
+						<div class="walk" v-if="a.walk">
 							<h4>스마트폰에 입력된 걷기양을 입력하세요*</h4>
-							<input
-								type="text"
-								class="form-control"
-								v-model="count.walk"
-							/><span>걸음</span>
+							<input type="text" class="form-control" v-model="a.amount" /><span
+								>걸음</span
+							>
 						</div>
-						<div class="others" v-if="!walk">
+						<div class="others" v-if="!a.walk">
 							<h4>운동 횟수를 입력하세요</h4>
-							<input
-								type="text"
-								class="form-control"
-								v-model="count.amount"
-							/><span>회</span>
+							<input type="text" class="form-control" v-model="a.amount" /><span
+								>회</span
+							>
 						</div>
 					</div>
 				</div>
@@ -145,12 +141,17 @@
 	const myInput = ref<HTMLElement | null>(null);
 	const exercise = ref<boolean>(false);
 	const tabNum = ref<number>(0);
-	const array = computed(() => {
-		return [1, 2];
-	});
+	const category1 = ref<string>('walk');
+	const category2 = ref('walk');
+	const walk1 = ref<boolean>(true);
+	const walk2 = ref<boolean>(true);
+	const amount1 = ref(0);
+	const amount2 = ref(0);
+	const array = ref([
+		{ num: 1, category: category1, walk: walk1, amount: amount1 },
+		{ num: 2, category: category2, walk: walk2, amount: amount2 },
+	]);
 	const checked = ref<string>('');
-	const category = ref<string>('walk');
-	const walk = ref<boolean>(true);
 
 	interface IValues {
 		category: string;
@@ -166,12 +167,11 @@
 	}
 	const day = reactive<Array<string>>(['오전', '오후']);
 	const values = reactive({ water: 0, smoke: 0, drink: 0 });
-	const count = reactive({ walk: 0, amount: 0 });
-	const exerciseValues = reactive<IValues>({
-		category: 'walk',
-		morning: { num: { walk: 0, etc: 0 } },
-		afternoon: { num: { walk: 0, etc: 0 } },
-	});
+	// const exerciseValues = reactive<IValues>({
+	// 	category: 'walk',
+	// 	morning: { num: { walk: 0, etc: 0 } },
+	// 	afternoon: { num: { walk: 0, etc: 0 } },
+	// });
 
 	const handleSubmit = (e: Event) => {
 		const todos = firestore.collection('todos');
@@ -179,7 +179,7 @@
 		todos.add({
 			date: dateValue.value.toLocaleDateString().toString(),
 			values: values,
-			exercise: exerciseValues,
+			exercise: array.value,
 		});
 
 		router.push('/');
@@ -194,28 +194,18 @@
 			exercise.value = false;
 		}
 	});
-	watch(category, (a) => {
-		exerciseValues.category = a;
-
+	watch(category1, (a) => {
 		if (a === 'walk') {
-			walk.value = true;
+			walk1.value = true;
 		} else {
-			walk.value = false;
+			walk1.value = false;
 		}
 	});
-	onUpdated(() => {
-		if (category.value === 'walk') {
-			if (tabNum.value === 0) {
-				exerciseValues.morning.num.walk = count.walk;
-			} else {
-				exerciseValues.afternoon.num.walk = count.walk;
-			}
+	watch(category2, (a) => {
+		if (a === 'walk') {
+			walk2.value = true;
 		} else {
-			if (tabNum.value === 0) {
-				exerciseValues.morning.num.etc = count.amount;
-			} else {
-				exerciseValues.afternoon.num.etc = count.amount;
-			}
+			walk2.value = false;
 		}
 	});
 </script>
