@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 import PostList from './components/PostList.vue';
 import PostWrite from './components/PostWrite.vue';
 import PostDetail from './components/PostDetail.vue';
+import ChartVue from './components/ChartVue.vue';
 
 const routes = [
 	{
@@ -18,6 +19,11 @@ const routes = [
 		path: '/:id/detail',
 		name: 'detail',
 		component: PostDetail,
+	},
+	{
+		path: '/chart',
+		name: 'chart',
+		component: ChartVue,
 	},
 ];
 

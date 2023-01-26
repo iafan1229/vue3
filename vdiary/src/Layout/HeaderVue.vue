@@ -48,8 +48,8 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 	import ButtonVue from '@/components/ButtonVue.vue';
-	const url = ref(['/', '/write']);
-	const menu = ref(['Home', 'Write']);
+	const url = ref(['/', '/write', '/chart']);
+	const menu = ref(['Home', 'Write', 'Chart']);
 </script>
 
 <style lang="scss">

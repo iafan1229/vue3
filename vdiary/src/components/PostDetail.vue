@@ -57,10 +57,10 @@
 
 	interface IValues {
 		date?: string;
-		exercise?: [
-			{ amount: number; category: string; num: number; walk: boolean },
-			{ amount: number; category: string; num: number; walk: boolean }
-		];
+		exercise?: {
+			0: { amount: number; category: string; num: number; walk: boolean };
+			1: { amount: number; category: string; num: number; walk: boolean };
+		};
 		values?: IVal;
 		text?: string;
 	}
@@ -122,14 +122,14 @@
 			},
 		},
 		xaxis: {
-			type: 'datetime',
-			categories: ['01/01/2011 GMT'],
+			type: 'category',
+			categories: [detail.value],
 		},
 	});
 	const series = reactive([
 		{
 			name: '평균 걷기 양',
-			data: [count.value.toString()],
+			data: [count.value.toFixed().toString()],
 		},
 		{
 			name: '내가 걸은 양',
@@ -150,7 +150,8 @@
 	});
 	onUpdated(() => {
 		if (detail.value.exercise) {
-			const [morning, afternoon] = detail.value.exercise;
+			const morning = detail.value.exercise[0];
+			const afternoon = detail.value.exercise[1];
 
 			switch (morning.category) {
 				case 'walk':
@@ -205,12 +206,9 @@
 	});
 
 	watch(detail, (data) => {
-		if (data) {
-			series[1].data.push(detail.value.exercise?.[0].amount);
+		if (data.exercise) {
+			series[1].data.push(Math.floor(data.exercise[0].amount).toString());
 		}
-	});
-	onMounted(() => {
-		console.log(count.value);
 	});
 </script>
 
