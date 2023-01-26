@@ -41,15 +41,19 @@
 			:options="chartOptions"
 			:series="series"
 		></apexChart>
+		<p><span style="font-weight: bold">코멘트:</span> {{ detail.text }}</p>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { reactive, onMounted, ref, onUpdated, watch } from 'vue';
+	import { reactive, onMounted, ref, onUpdated, watch, shallowRef } from 'vue';
 	import { useRoute } from 'vue-router';
 	import { firestore } from '../firebase';
 	import VueApexCharts from 'vue3-apexcharts';
-	import { react } from '@babel/types';
+	import { useCounterStore } from '../AverageStore';
+	import { storeToRefs } from 'pinia';
+	const store = useCounterStore();
+	const { count } = storeToRefs(store);
 
 	interface IValues {
 		date?: string;
@@ -58,6 +62,7 @@
 			{ amount: number; category: string; num: number; walk: boolean }
 		];
 		values?: IVal;
+		text?: string;
 	}
 	interface IVal {
 		smoke?: number;
@@ -79,19 +84,69 @@
 		detail.value = { ...doc };
 	});
 	const chartOptions = reactive({
-		chart: { id: 'vuechart-example' },
-		xaxis: { categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998] },
+		chart: {
+			type: 'bar',
+			height: 350,
+			stacked: true,
+			toolbar: {
+				show: true,
+			},
+			zoom: {
+				enabled: false,
+			},
+		},
+		responsive: [
+			{
+				breakpoint: 480,
+				options: {
+					legend: {
+						position: 'bottom',
+						offsetX: -10,
+						offsetY: 0,
+					},
+				},
+			},
+		],
+		plotOptions: {
+			bar: {
+				horizontal: false,
+				dataLabels: {
+					total: {
+						enabled: true,
+						style: {
+							fontSize: '13px',
+							fontWeight: 900,
+						},
+					},
+				},
+			},
+		},
+		xaxis: {
+			type: 'datetime',
+			categories: ['01/01/2011 GMT'],
+		},
 	});
 	const series = reactive([
 		{
-			name: 'series-1',
-			data: [30, 40, 35, 50, 49, 60, 70, 91],
+			name: '평균 걷기 양',
+			data: [count.value.toString()],
 		},
+		{
+			name: '내가 걸은 양',
+			data: [],
+		},
+		// {
+		// 	name: 'PRODUCT C',
+		// 	data: [11, 17, 15, 15, 21, 14],
+		// },
+		// {
+		// 	name: 'PRODUCT D',
+		// 	data: [21, 7, 25, 13, 22, 8],
+		// },
 	]);
-	const apexChart = ref(VueApexCharts);
-
+	const apexChart = shallowRef(VueApexCharts);
 	onMounted(() => {
-		console.log(apexChart);
+		console.log(detail.value.exercise?.[0].amount);
 	});
 	onUpdated(() => {
 		if (detail.value.exercise) {
@@ -147,6 +202,15 @@
 				}
 			}
 		}
+	});
+
+	watch(detail, (data) => {
+		if (data) {
+			series[1].data.push(detail.value.exercise?.[0].amount);
+		}
+	});
+	onMounted(() => {
+		console.log(count.value);
 	});
 </script>
 

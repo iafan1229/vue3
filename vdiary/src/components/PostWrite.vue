@@ -120,6 +120,7 @@
 		<h4>메모</h4>
 		<div class="form-floating">
 			<textarea
+				v-model="text"
 				class="form-control"
 				placeholder="Leave a comment here"
 				id="floatingTextarea2"
@@ -152,6 +153,7 @@
 		{ num: 2, category: category2, walk: walk2, amount: amount2 },
 	]);
 	const checked = ref<string>('');
+	const text = ref('');
 
 	interface IValues {
 		category: string;
@@ -167,11 +169,6 @@
 	}
 	const day = reactive<Array<string>>(['오전', '오후']);
 	const values = reactive({ water: 0, smoke: 0, drink: 0 });
-	// const exerciseValues = reactive<IValues>({
-	// 	category: 'walk',
-	// 	morning: { num: { walk: 0, etc: 0 } },
-	// 	afternoon: { num: { walk: 0, etc: 0 } },
-	// });
 
 	const handleSubmit = (e: Event) => {
 		const todos = firestore.collection('todos');
@@ -180,6 +177,7 @@
 			date: dateValue.value.toLocaleDateString().toString(),
 			values: values,
 			exercise: array.value,
+			text: text.value,
 		});
 
 		router.push('/');
@@ -206,6 +204,12 @@
 			walk2.value = true;
 		} else {
 			walk2.value = false;
+		}
+	});
+	watch(text, (a) => {
+		if (a.length > 20) {
+			alert('문자가 너무 깁니다');
+			return;
 		}
 	});
 </script>

@@ -6,5 +6,13 @@ import VCalendar from 'v-calendar';
 import 'v-calendar/dist/style.css';
 import VueApexCharts from 'vue3-apexcharts';
 import router from './router';
+import { createPinia } from 'pinia';
 
-createApp(App).use(router).use(VCalendar).use(VueApexCharts).mount('#app');
+const pinia = createPinia();
+
+createApp(App)
+	.use(router)
+	.use(VCalendar)
+	.use(VueApexCharts)
+	.use(pinia)
+	.mount('#app');

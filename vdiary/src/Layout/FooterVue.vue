@@ -6,7 +6,6 @@
 
 <style lang="scss" scoped>
 	div {
-		position: absolute;
 		bottom: 10px;
 		left: 0;
 		text-align: center;

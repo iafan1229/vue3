@@ -63,6 +63,9 @@
 											{{ x.length === 2 ? '0' + x.trim() : x }}
 										</h5>
 									</div>
+									<div class="comment">
+										{{ a.text }}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -81,7 +84,9 @@
 </template>
 
 <script setup lang="ts">
-	import { reactive, onMounted, onUpdated, ref } from 'vue';
+	import { useCounterStore } from '../AverageStore';
+	import { storeToRefs } from 'pinia';
+	import { reactive, onMounted, onUpdated, ref, watch } from 'vue';
 	import data from '../assets/data';
 	import { firestore } from '../firebase';
 
@@ -89,6 +94,7 @@
 		date?: string;
 		exercise?: IExer;
 		values?: IVal;
+		text?: string;
 	}
 	interface IVal {
 		smoke?: number;
@@ -96,20 +102,24 @@
 		drink?: number;
 	}
 	interface IExer {
-		category: string;
-		morning: IDaily;
-		afternoon: IDaily;
-	}
-	interface IDaily {
-		num: INum;
-	}
-	interface INum {
-		walk: number;
-		etc: number;
+		0: { amount: number; category: string; num: number; walk: boolean };
+		1: { amount: number; category: string; num: number; walk: boolean };
 	}
 
 	let dataContent = reactive<Array<IValues>>([]);
 	const status = ref('보통');
+	const morningAverage = reactive({
+		walk: 0,
+		gym: 0,
+		yoga: 0,
+		pilates: 0,
+	});
+	const afternoonAverage = reactive({
+		walk: 0,
+		gym: 0,
+		yoga: 0,
+		pilates: 0,
+	});
 
 	const todos = firestore.collection('todos');
 	todos.get().then((prod) => {
@@ -117,7 +127,26 @@
 			dataContent.push(el.data());
 		});
 	});
-	// dataContent = [...localData];
+	const store = useCounterStore();
+
+	watch(dataContent, (data) => {
+		if (data) {
+			const a = dataContent.map((el) => el.exercise?.[0]);
+
+			a.forEach((el, idx) => {
+				if (el?.category === 'walk') {
+					morningAverage.walk += Number(el?.amount);
+					if (idx === a.length - 1) {
+						morningAverage.walk = morningAverage.walk / a.length;
+					}
+				}
+			});
+		}
+	});
+	watch(morningAverage, (data) => {
+		// console.log(data);
+		store.increment(data.walk);
+	});
 </script>
 
 <style lang="scss">
@@ -329,5 +358,8 @@
 
 	.container:hover .item.back {
 		transform: rotateY(0deg);
+	}
+	.comment {
+		font-size: 12px;
 	}
 </style>
