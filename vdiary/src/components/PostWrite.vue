@@ -137,6 +137,9 @@
 	import { onMounted, watch, reactive, ref, computed, onUpdated } from 'vue';
 	import PostCalendar from './PostCalendar.vue';
 	import { firestore } from '../firebase';
+	import { useDateStore } from '@/DateStore';
+	import { storeToRefs } from 'pinia';
+
 	const dateValue = ref(new Date());
 	const calendar = ref(false);
 	const myInput = ref<HTMLElement | null>(null);
@@ -154,6 +157,8 @@
 	]);
 	const checked = ref<string>('');
 	const text = ref('');
+	const dateStore = useDateStore();
+	const { count } = storeToRefs(dateStore);
 
 	interface IValues {
 		category: string;
@@ -171,8 +176,10 @@
 	const values = reactive({ water: 0, smoke: 0, drink: 0 });
 
 	const handleSubmit = (e: Event) => {
-		const todos = firestore.collection('todos');
 		e.preventDefault();
+		if (count.value.includes(dateValue.value.toLocaleDateString()))
+			return alert('날짜가 겹칩니다');
+		const todos = firestore.collection('todos');
 		todos.add({
 			date: dateValue.value.toLocaleDateString().toString(),
 			values: values,

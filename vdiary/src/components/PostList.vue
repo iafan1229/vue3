@@ -1,8 +1,7 @@
 <template>
 	<ul class="card-box">
-		
 		<li
-			v-for="(a, i) in dataContent.sort((a:any,b:any)=>new Date(a.date).getTime() - new Date(b.date).getTime())"
+			v-for="(a, i) in dataContent"
 			:key="i"
 			class="container"
 			:class="
@@ -92,7 +91,6 @@
 	import { firestore } from '../firebase';
 	import { useDateStore } from '@/DateStore';
 
-
 	interface IValues {
 		date?: string;
 		exercise?: IExer;
@@ -124,23 +122,26 @@
 		pilates: 0,
 	});
 	const dateStore = useDateStore();
-	console.log(dateStore.count.length)
+	const { count } = storeToRefs(dateStore);
 	const todos = firestore.collection('todos');
-	todos.orderBy("date").get().then((prod) => {
-		prod.forEach((el) => {
-			dataContent.push(el.data());
+	todos
+		.orderBy('date')
+		.get()
+		.then((prod) => {
+			prod.forEach((el) => {
+				dataContent.push(el.data());
+			});
 		});
-	});
 	const store = useCounterStore();
-	
+
 	watch(dataContent, (data) => {
 		if (data) {
-			if(Object.keys(dateStore.count).length===0) {
-				dataContent.forEach(el=>{
-					if(el.date) {
-						dateStore.increment(el.date)
+			if (Object.keys(count.value).length !== dataContent.length) {
+				dataContent.forEach((el) => {
+					if (el.date) {
+						dateStore.increment(el.date);
 					}
-				})
+				});
 			}
 
 			const a = dataContent.map((el) => el.exercise?.[0]);
