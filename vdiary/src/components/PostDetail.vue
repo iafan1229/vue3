@@ -54,7 +54,7 @@
 	import { storeToRefs } from 'pinia';
 	const store = useCounterStore();
 	const { count } = storeToRefs(store);
-
+	type IDate = string | undefined;
 	interface IValues {
 		date?: string;
 		exercise?: {
@@ -78,7 +78,7 @@
 
 	const morningValue = ref('없음');
 	const afternoonValue = ref('없음');
-	const todos = firestore.collection('todos');
+	const todos = firestore.collection('todos').orderBy("date");
 	todos.get().then((snapShot) => {
 		const doc = snapShot.docs[Number(route.params.id)].data();
 		detail.value = { ...doc };
@@ -123,7 +123,7 @@
 		},
 		xaxis: {
 			type: 'category',
-			categories: [detail.value],
+			categories: [] as IDate[],
 		},
 	});
 	const series = reactive([
@@ -145,9 +145,6 @@
 		// },
 	]);
 	const apexChart = shallowRef(VueApexCharts);
-	onMounted(() => {
-		console.log(detail.value.exercise?.[0].amount);
-	});
 	onUpdated(() => {
 		if (detail.value.exercise) {
 			const morning = detail.value.exercise[0];
@@ -208,6 +205,9 @@
 	watch(detail, (data) => {
 		if (data.exercise) {
 			series[1].data.push(Math.floor(data.exercise[0].amount).toString());
+		}
+		if(data.date) {
+			chartOptions.xaxis.categories.push(data.date)
 		}
 	});
 </script>

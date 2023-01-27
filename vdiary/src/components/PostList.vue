@@ -1,7 +1,8 @@
 <template>
 	<ul class="card-box">
+		
 		<li
-			v-for="(a, i) in dataContent"
+			v-for="(a, i) in dataContent.sort((a:any,b:any)=>new Date(a.date).getTime() - new Date(b.date).getTime())"
 			:key="i"
 			class="container"
 			:class="
@@ -89,6 +90,8 @@
 	import { reactive, onMounted, onUpdated, ref, watch } from 'vue';
 	import data from '../assets/data';
 	import { firestore } from '../firebase';
+	import { useDateStore } from '@/DateStore';
+
 
 	interface IValues {
 		date?: string;
@@ -120,17 +123,26 @@
 		yoga: 0,
 		pilates: 0,
 	});
-
+	const dateStore = useDateStore();
+	console.log(dateStore.count.length)
 	const todos = firestore.collection('todos');
-	todos.get().then((prod) => {
+	todos.orderBy("date").get().then((prod) => {
 		prod.forEach((el) => {
 			dataContent.push(el.data());
 		});
 	});
 	const store = useCounterStore();
-
+	
 	watch(dataContent, (data) => {
 		if (data) {
+			if(Object.keys(dateStore.count).length===0) {
+				dataContent.forEach(el=>{
+					if(el.date) {
+						dateStore.increment(el.date)
+					}
+				})
+			}
+
 			const a = dataContent.map((el) => el.exercise?.[0]);
 
 			a.forEach((el, idx) => {
@@ -144,7 +156,6 @@
 		}
 	});
 	watch(morningAverage, (data) => {
-		// console.log(data);
 		store.increment(data.walk);
 	});
 </script>

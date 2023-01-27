@@ -1,12 +1,11 @@
 <template>
 	<div>
-		<apexChart
+		<apexChart ref="chart"
 			type="area"
 			height="550"
 			:options="chartOptions"
 			:series="series"
 		></apexChart>
-		{{ chartOptions }}
 	</div>
 </template>
 
@@ -14,6 +13,12 @@
 	import { reactive, onMounted, ref, onUpdated, watch, shallowRef } from 'vue';
 	import VueApexCharts from 'vue3-apexcharts';
 	import { firestore } from '../firebase';
+	import {useDateStore} from '../DateStore'
+	import { storeToRefs } from 'pinia';
+	const store = useDateStore();
+	const { count } = storeToRefs(store);
+	const chart = ref(null);
+
 	type IDate = string | undefined;
 	interface IValues {
 		date?: string;
@@ -31,7 +36,7 @@
 		1: { amount: number; category: string; num: number; walk: boolean };
 	}
 
-	let dataContent = reactive<Array<IValues>>([]);
+	let dataContent = ref<Array<IValues>>([]);
 	const apexChart = shallowRef(VueApexCharts);
 	const chartOptions = ref({
 		chart: {
@@ -45,7 +50,8 @@
 			curve: 'smooth',
 		},
 		xaxis: {
-			categories: ['1'] as IDate[],
+			type: 'category',
+			categories: count.value,
 		},
 		tooltip: {
 			x: {
@@ -53,26 +59,23 @@
 			},
 		},
 	});
-	const series = reactive([
+	const series = ref([
 		{
 			name: '오전 걷기량',
-			data: [31, 40, 28],
+			data: [] as any,
 		},
 		{
 			name: '오후 걷기량',
-			data: [11, 32, 45],
+			data: [] as any,
 		},
 	]);
-	const todos = firestore.collection('todos');
+	const todos = firestore.collection('todos').orderBy("date");
 	todos.get().then((prod) => {
 		prod.forEach((el) => {
-			dataContent.push(el.data());
+			dataContent.value.push(el.data());
+			series.value[0].data.push(el.data().exercise?.[0].amount)
+			series.value[1].data.push(el.data().exercise?.[1].amount)
 		});
 	});
-	watch(dataContent, (data) => {
-		if (data) {
-			const a = dataContent.map((el) => el.date);
-			chartOptions.value.xaxis.categories = [...a];
-		}
-	});
+
 </script>
